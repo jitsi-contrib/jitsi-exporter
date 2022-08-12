@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var metricsPath, metricsAddr, logLevel, targetUrl string
+var metricsPath, metricsAddr, logLevel string
 var prober generic.Prober
 var httpClient = &http.Client{
 	Transport: &http.Transport{
