@@ -6,13 +6,12 @@ import (
 
 	"github.com/jitsi-contrib/jitsi-exporter/pkg/generic"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 type prober struct {
 	client *http.Client
 	target string
-	log    *logrus.Logger
 }
 
 func NewProber(client *http.Client, target string) generic.Prober {
@@ -37,14 +36,14 @@ func (p *prober) Labels() []string {
 func (c *prober) Probe() (string, bool) {
 	resp, err := c.client.Get(c.target)
 	if err != nil {
-		c.log.Error(err)
+		log.Error(err)
 		return "", false
 	}
 	defer resp.Body.Close()
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		c.log.Error(err)
+		log.Error(err)
 		return "", false
 	}
 
