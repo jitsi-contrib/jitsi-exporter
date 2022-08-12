@@ -126,15 +126,6 @@ func (p *prober) MetricGetters() []generic.MetricGetter {
 	}
 }
 
-func healthyMetricGetter(data string, p generic.Prober) prometheus.Metric {
-	var healthy float64
-	if gjson.Get(data, "healthy").Bool() {
-		healthy = 1
-	}
-	return prometheus.MustNewConstMetric(
-		prometheus.NewDesc(prometheus.BuildFQName("jitsi", p.Name(), "healthy"), "TODO", nil, nil), prometheus.GaugeValue, healthy)
-}
-
 func newBucketGetter(path string) generic.MetricGetter {
 	return func(data string, p generic.Prober) prometheus.Metric {
 		sum := gjson.Get(data, fmt.Sprintf("%s.total_value", path)).Float()
@@ -143,7 +134,6 @@ func newBucketGetter(path string) generic.MetricGetter {
 		regex := regexp.MustCompile(`_to_(\d+)$`)
 		for k, v := range gjson.Get(data, fmt.Sprintf("%s.buckets", path)).Map() {
 			matches := regex.FindStringSubmatch(k)
-			fmt.Printf("%#v\n", matches)
 			if matches != nil {
 				b, _ := strconv.ParseFloat(matches[1], 64)
 				buckets[b] = v.Uint()
